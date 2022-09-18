@@ -49,7 +49,7 @@ def weightedgraphrank( G, W, d=0.85, sinit=1., threshold=0.0001 ):
 		diff = np.abs( new_scores - scores )
 		scores = new_scores
 
-		done = np.all( diff>threshold )
+		done = np.all( diff<=threshold )
 
 
 	return { i:score for i, score in enumerate( scores ) } 
