@@ -7,7 +7,8 @@ from nltk.tokenize import RegexpTokenizer
 from nltk.tokenize import word_tokenize
 from stop_words import get_stop_words
 
-from graphrank import graphrank
+from .graphrank import graphrank
+import networkx as nx
 
 class TextRank( object ):
 	"""
@@ -67,7 +68,8 @@ class TextRank( object ):
 					continue
 
 		# run graphrank on it until it converges
-		scores = graphrank( graph )
+		nx_graph = nx.from_numpy_array( graph )
+		scores = nx.pagerank( nx_graph )
 
 		# sort the vertices in reverse order and retain the top T
 		if T is None:
