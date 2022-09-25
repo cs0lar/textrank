@@ -14,7 +14,9 @@ def intersect( A, B ):
 def precision( assigned, correct ):
     
     intersections_lens = [ len( intersect( assigned[ i ], correct[ i ] ) ) for i in range( len( assigned ) ) ]
+    
     assigned_lens = [ len( item ) for item in assigned ]
+    print ( f'average matches={np.mean( intersections_lens )} out of {np.mean( assigned_lens)}')
      
     return np.sum( intersections_lens ) / np.sum( assigned_lens )
 
@@ -80,15 +82,20 @@ class TestTextRank( unittest.TestCase ):
 
             # perform keyword extraction
             keywords = self.textrank.multiword_keywords( text )
-            # keywords = self.textrank.keywords( text )
 
             new_hl = keywords
             new_tl = [ label[0] for label in self.testset[ idx ] ]
 
+            inters = set( new_hl ) & set( new_tl ) 
+            # print ( sorted( new_hl ) )
+            # print ( sorted( new_tl ) )
+            # print ( inters )
+            # print ( f'matches: { len(inters)} out of {len(new_tl)}' )
+            # input( 'press key to continue' )
             hl.append( new_hl )
             tl.append( new_tl )
             assigned_count.append( len( new_hl ) )
-            correct_count.append( len( new_tl ) ) 
+            correct_count.append( len( inters ) ) 
 
 
         print ( f'assigned: total={np.sum( assigned_count )}, mean={np.mean( assigned_count )}' )
@@ -98,7 +105,7 @@ class TestTextRank( unittest.TestCase ):
 
     def testTextRankInspecDataset( self ):
 
-        windows = [ 2, 3, 5, 10 ]
+        windows = [ 1, 2, 3, 4, 5, 10 ]
 
         for N in windows:
             self.evaluateInspecDataset( N )
