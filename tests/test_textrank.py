@@ -16,7 +16,6 @@ def precision( assigned, correct ):
     intersections_lens = [ len( intersect( assigned[ i ], correct[ i ] ) ) for i in range( len( assigned ) ) ]
     
     assigned_lens = [ len( item ) for item in assigned ]
-    print ( f'average matches={np.mean( intersections_lens )} out of {np.mean( assigned_lens)}')
      
     return np.sum( intersections_lens ) / np.sum( assigned_lens )
 
@@ -37,6 +36,7 @@ def f1( assigned, correct ):
 
 
 class TestTextRank( unittest.TestCase ):
+    
     def setUp( self ):
         self.textrank  = TextRank( N=2 )
         self.assetpath = os.path.join( os.getcwd(), 'tests/assets' )
@@ -81,22 +81,18 @@ class TestTextRank( unittest.TestCase ):
                 text = f.read().replace( '\n', ' ' )
 
             # perform keyword extraction
-            keywords = self.textrank.multiword_keywords( text )
+            keywords = self.textrank.multikeywords( text )
 
             new_hl = keywords
             new_tl = [ label[0] for label in self.testset[ idx ] ]
 
             inters = set( new_hl ) & set( new_tl ) 
-            # print ( sorted( new_hl ) )
-            # print ( sorted( new_tl ) )
-            # print ( inters )
-            # print ( f'matches: { len(inters)} out of {len(new_tl)}' )
-            # input( 'press key to continue' )
+
             hl.append( new_hl )
             tl.append( new_tl )
+
             assigned_count.append( len( new_hl ) )
             correct_count.append( len( inters ) ) 
-
 
         print ( f'assigned: total={np.sum( assigned_count )}, mean={np.mean( assigned_count )}' )
         print ( f'correct:  total={np.sum( correct_count)}, mean={np.mean( correct_count )}' )
