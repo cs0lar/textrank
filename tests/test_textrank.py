@@ -2,6 +2,7 @@ import os
 import math
 import json
 import unittest
+import warnings
 import numpy as np
 from tqdm import tqdm
 
@@ -47,16 +48,19 @@ class TestTextRank( unittest.TestCase ):
             self.testset = json.load( f )
 
     def testTextRankOutputAndScores( self ):
-        ranking = self.textrank.rank( self.text )
 
-        [ self.assertIsInstance( pair, tuple ) for pair in ranking ]
+        with warnings.catch_warnings():
+            warnings.simplefilter( 'ignore' )
+            ranking = self.textrank.rank( self.text )
 
-        score = math.inf
+            [ self.assertIsInstance( pair, tuple ) for pair in ranking ]
 
-        # check that the results are sorted in descending order
-        for k, v in ranking:
-            self.assertTrue( v <= score )
-            score = v
+            score = math.inf
+
+            # check that the results are sorted in descending order
+            for k, v in ranking:
+                self.assertTrue( v <= score )
+                score = v
 
     def evaluateInspecDataset( self, N ):
         # the ground truth - the batch of true labels 
@@ -80,8 +84,10 @@ class TestTextRank( unittest.TestCase ):
             with open( file ) as f:
                 text = f.read().replace( '\n', ' ' )
 
-            # perform keyword extraction
-            keywords = self.textrank.multikeywords( text )
+            with warnings.catch_warnings():
+                warnings.simplefilter( 'ignore' )
+                # perform keyword extraction
+                keywords = self.textrank.multikeywords( text )
 
             new_hl = keywords
             new_tl = [ label[0] for label in self.testset[ idx ] ]
