@@ -7,8 +7,6 @@ import numpy as np
 from nltk.tokenize import word_tokenize
 from stop_words import get_stop_words
 
-import matplotlib.pyplot as plt
-
 import networkx as nx
 
 class TextRank( object ):
@@ -22,12 +20,13 @@ class TextRank( object ):
 		-----------
 		
 			N - the size of the window, in lexical units (e.g. words, sentences) that defines 
-				the co-occurrence relation. Default is 2 logical lexical units.
+				the co-occurrence relation. Default is 2, i.e. a window that comprises the target 
+				token as well as the two logical units either side of it.
 
 			pos - an array of syntactic filters, codes for the parts of speech that are to be considered 
 				  nodes of the graph (e.g. only use nouns and verbs). Default is noun and adjectives.
 			
-			T - the number of top ranked lexical units to return. Defaults to a third of the vertices in the graph
+			T - the number of top ranked lexical units to return. It T is not specified, T defaults to a third of the vertices in the graph
 
 	"""
 	def __init__( self, N=2, pos=[ 'NN', 'JJ' ] ):
@@ -36,7 +35,29 @@ class TextRank( object ):
 		self._pos = pos
 
 	def preprocess( self, text ):
+		"""
+		It tokenises the input text and annotates it with parts of speech tags. The tags are used
+		for filtering the tokens and retaining those lexical units (e.g. noun, adjectives) that
+		will constitute the vertices of the text graph.
 
+		Parameters:
+		------------
+
+		text: string
+			the original text to analyse
+
+
+		Returns
+		--------
+
+		tokens: list
+			the list of tokens extracted from the original text
+
+		vertices: list
+			the subset of tokens that constitute the vertices for the text graph sorted in alphabetical order
+		
+		"""
+		
 		pos = self._pos
 
 		# first, the text is tokenised and annotated with parts of speech tags
@@ -52,7 +73,25 @@ class TextRank( object ):
 		return tokens, vertices
 
 	def rank( self, text, tol=0.0001 ):
+		"""
+		It performs keywords extraction using the TextRank algorithm on the input text.
 
+		Parameters:
+		------------
+		
+		text: string
+			the original text to analyse
+
+		tol: float
+			the tolerance to use for convergence of the pagerank algorithm that scores the graph's vertices
+
+
+		Returns
+		--------
+		ranking: list
+			an ordered (descending) list of pairs, each of which is comprised of a keyword (token) and its pagerank score
+
+		"""
 		tokens, units = self.preprocess( text )
 
 		self._lenunits = len( units )
@@ -67,7 +106,37 @@ class TextRank( object ):
 
 
 	def graph( self, vertices, tokens, plot=False ):
+		"""
+		It generates the text graph given a set of tokens and the subset of tokens
+		that ought to be considered vertices of the graph.
+		Given two vertices X and Y, an edge is added between them if and only if X and Y
+		co-occur within a window of N lexical units in the tokenised text.
+		The graph returned is un-directed (the in-degree of a vertex is equal to the out-degree) and
+		un-weighted.
+		The resulting graph can be plotted for visual inspection by setting `plot` to True. The plot
+		function uses Matplotlib internally therefore in order to show the visualisation the 
+		`matplotlib.pyplot` module must be loaded the `show()` function invoked.
 
+		Parameters
+		-----------
+
+		vertices: list
+			subset of tokens to be considered the vertices of the graph 
+
+		tokens: list
+			the list of tokens extracted from the original text
+
+		plot: boolean
+			if set to True, the generated graph is plotted using Matplotlib
+
+
+		Returns
+		-------
+
+		graph: networkx graph
+			an undirected, unweighted graph representing the lexical units co-occurrences in the original text
+
+		"""
 		N = self._N
 		lentokens = len( tokens )
 
@@ -98,7 +167,25 @@ class TextRank( object ):
 
 
 	def keywords( self, text, T=None ):
+		"""
+		It perform keywords extraction from the input text using the TextRank algorithm.
 
+		Parameters
+		-----------
+
+		text: string
+			the original text to analyse
+
+		T: the number of top ranked keywords to return
+
+		Returns
+		-------
+
+		keywords: list
+			A number T of keywords extracted from the original text sorted in descending order according to their 
+			TextRank score. If T was not specified, T is set to one third of the number of vertices in the text graph is returned
+
+		"""
 		ranking = self.rank( text )
 		words = [ token for token, score in ranking ]
 
@@ -119,7 +206,29 @@ class TextRank( object ):
 		return target, curridx + 1
 
 	def multikeywords( self, text, T=None ):
+		"""
+		It performs multi-word keyword extraction from the input text using the TextRank algorithm. A keyword 
+		extraction is first applied and sequences of keywords that are found to be adjacent in the original 
+		text are merged together. Un-merged keywords are retained as is.
+		Multi-word keywords are scored by summing the scores of their component keywords.
 
+		Parameters
+		----------
+		
+		text: string
+			the original text to be analysed
+	
+		T: the number of top ranked multi-word keywords to return
+
+		Returns
+		--------
+
+		multikeywords: list
+			A number T of multi-word keywords extracted from the original text sorted in descending order according
+			to their TextRank score. If T was not specified, T is set to one third of the number of vertices in the text graph is returned
+
+
+		"""
 		ranking = { token:score for ( token, score ) in self.rank( text ) }
 		keywords = list( ranking.keys() )
 
