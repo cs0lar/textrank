@@ -12,7 +12,7 @@ Python implementation of the textrank algorithm - [Mihalcea, Tarau 2004](https:/
 Use the `rank()` method to perform a full ranking of all the keywords in the input text. The `rank()` method return keyword-score pairs sorted in descending order:
 
 ```python
-from texrank.textrank import TexRank
+from texrank.textrank import TextRank
 
 ranker = TextRank( N=2 )
 
