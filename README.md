@@ -11,7 +11,7 @@ Python implementation of the textrank algorithm (mihalcea, tarau 2004)
 ### Ranking
 Use the `rank()` method to perform a full ranking of all the keywords in the input text. The `rank()` method return keyword-score pairs sorted in descending order:
 
-```
+```python
 from texrank.textrank import TexRank
 
 ranker = TextRank( N=2 )
@@ -24,7 +24,7 @@ print ( ranker.rank( text ) )
 
 Use the `keywords()` method to return the top `T` ranked keywords from the input text. If `T` is not specified, this method sets `T` to be one-third of the vertices of the textrank graph.
 
-```
+```python
 print ( ranker.keywords( text, T=10 ) )
 
 ```
@@ -33,7 +33,7 @@ print ( ranker.keywords( text, T=10 ) )
 
 Use the `multikeywords()` method to return the top `T` ranked multi-word keywords from the input text:
 
-```
+```python
 print ( ranker.multikeywords( text ) )
 
 ```
@@ -43,7 +43,7 @@ print ( ranker.multikeywords( text ) )
 Sometimes it is useful to inspect the graph that `TextRank` generates for a given text. To visualise a textrank graph use the `graph()` method with the `plot` argument set to `True`. It uses `matplotlib` internally to draw the network therefore in order to show the visualisation the `matplotlib.pyplot` module must be loaded and the `show()` function invoked. It takes as arguments the tokens extracted from the input text and the subset of these tokens that is to constitute the graph's vertices.
 Use the `preprocess()` method to obtain these.
 
-```
+```python
 import matplotlib.pyplot as plt
 
 tokens, vertices = ranker.preprocess( text )
