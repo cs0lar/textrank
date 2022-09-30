@@ -115,7 +115,7 @@ class TextRank( object ):
 		un-weighted.
 		The resulting graph can be plotted for visual inspection by setting `plot` to True. The plot
 		function uses Matplotlib internally therefore in order to show the visualisation the 
-		`matplotlib.pyplot` module must be loaded the `show()` function invoked.
+		`matplotlib.pyplot` module must be loaded and the `show()` function invoked.
 
 		Parameters
 		-----------
