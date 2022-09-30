@@ -1,6 +1,6 @@
 # textrank
 
-Python implementation of the textrank algorithm (mihalcea, tarau 2004)
+[Python implementation of the textrank algorithm - Mihalcea, Tarau 2004](https://aclanthology.org/W04-3252.pdf) 
 
 ## Installation
 
