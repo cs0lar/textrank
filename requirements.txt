@@ -1,0 +1,6 @@
+networkx==2.8.6
+nltk==3.7
+numpy==1.23.3
+scipy==1.9.1
+stop_words==2018.7.23
+tqdm==4.64.1
